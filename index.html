@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OKIENAK Website V8.0</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    
+    <style id="custom-styles">
+        /* Variabel Warna Dasar */
+        :root {
+            --p: #673AB7; /* Primary / Deep Purple */
+            --l: #F3E5F5; /* Light Lavender - Background (Light Mode) */
+            --b: #FFFFFF; /* White (Light Mode) */
+            --t: #4527A0; /* Text Darker Purple (Light Mode) */
+            --e: #FF7043; /* Error/Accent (Orange) */
+            --s: #4CAF50; /* Success Green */
+            --sh: rgba(103, 58, 183, 0.4); 
+            
+            /* Dark Mode Variables (NEW) */
+            --d-bg: #1A1A2E; 
+            --d-cont: #2C2C42; 
+            --d-text: #FFFFFF;
+            --d-text-sub: #BBBBBB;
+        }
+
+        /* DARK MODE STYLES (NEW) */
+        body.dark-mode {
+            background: var(--d-bg);
+            color: var(--d-text);
+        }
+        body.dark-mode .main-container {
+            background: var(--d-cont);
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.5);
+        }
+        body.dark-mode .welcome-subtitle, body.dark-mode p, body.dark-mode .note-card p, body.dark-mode h4 {
+            color: var(--d-text-sub) !important;
+        }
+        body.dark-mode .auth-toggle { background: var(--d-bg); }
+        body.dark-mode input:not([type="radio"]):not([type="checkbox"]):not([type="color"]), 
+        body.dark-mode textarea, body.dark-mode select {
+            background: #1A1A2E;
+            color: var(--d-text);
+            border: 1px solid #444;
+        }
+        body.dark-mode input:focus {
+             background: var(--d-cont);
+        }
+        body.dark-mode .note-card { background: #353550; }
+        body.dark-mode footer { color: #8C9EFF; }
+        body.dark-mode footer a { color: #8C9EFF; border-bottom-color: #8C9EFF; }
+        body.dark-mode .welcome-title { color: #A0A9FF; text-shadow: 3px 3px 8px rgba(160, 169, 255, 0.3); }
+
+
+        /* Global Reset & Base */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            transition: all 0.35s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        html, body {
+            min-height: 100vh;
+            background: var(--l); 
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--t);
+            overflow-x: hidden; 
+            position: relative;
+        }
+        
+        /* --- DYNAMIC BACKGROUND ANIMATION (NEW) --- */
+        .bg-gradient-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradientAnim 15s ease infinite;
+            opacity: 0.3; /* Sedikit transparan agar tidak terlalu ramai */
+            z-index: -1;
+        }
+        @keyframes gradientAnim {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .main-container {
+            width: 95%; 
+            max-width: 750px; 
+            background: var(--b);
+            border-radius: 25px; 
+            padding: 50px; 
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.18); 
+            margin: 40px auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.6s ease-out;
+            position: relative; 
+            z-index: 10; /* Pastikan di atas background */
+        }
+        
+        /* --- 1. WELCOME CONTAINER (Minimalis & Fokus) --- */
+        #hC {
+            background: var(--b); /* Override gradient di welcome screen */
+        }
+        .welcome-title {
+            font-size: 5rem;
+            font-weight: 900;
+            color: var(--p);
+            margin-bottom: 25px;
+            letter-spacing: 3px;
+            text-shadow: 3px 3px 8px var(--sh);
+            z-index: 10;
+        }
+
+        /* --- 2. KOMPONEN UMUM (Tombol Copy Baru) --- */
+        .pill-button {
+            /* ... (Styles sama seperti V7.0) ... */
+            background: var(--p); color: #fff; cursor: pointer; border: none; font-weight: 600; border-radius: 50px; padding: 1rem 2.5rem; box-shadow: 0 10px 20px var(--sh); letter-spacing: 0.5px; text-transform: uppercase;
+        }
+        
+        /* Tombol Copy (NEW) */
+        .copy-btn {
+            background: #00BCD4; 
+            color: white; 
+            border: none;
+            padding: 8px 15px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-left: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .copy-btn:hover {
+            background: #0097A7;
+            transform: scale(1.05);
+        }
+        
+        /* Footer Email Fix */
+        footer a {
+            color: var(--p);
+            border-bottom: 1px dotted var(--p);
+            font-weight: 500;
+        }
+        body.dark-mode footer a {
+             color: #8C9EFF; border-bottom-color: #8C9EFF;
+        }
+
+        /* Sisanya dipertahankan dari V7.0 */
+    </style>
+</head>
+<body class="light-mode">
+    <div class="bg-gradient-overlay"></div>
+    
+    <div class="main-container" id="hC">
+        <h1 class="welcome-title">OKIENAK</h1>
+        <p class="welcome-subtitle">Your private, stylish, and time-bound content sharing hub.</p>
+        <button id="jB" class="pill-button" style="padding: 15px 50px; font-size: 1.1rem; z-index: 10;">GET STARTED</button>
+    </div>
+
+    <div class="main-container hidden" id="aC">
+        <h1 style="color:var(--t); font-size: 2.2rem; margin-bottom: 10px;">Secure <span style="color:var(--p);">Access</span></h1>
+        <p style="margin-bottom: 3.5rem; font-size: 0.9rem; color: #777; font-weight: 300;">Log in or create a new account.</p>
+        
+        <div class="auth-toggle">
+            <div id="authToggleSlider" class="auth-toggle-slider"></div>
+            <button id="lT" class="active">SIGN IN</button>
+            <button id="rT">SIGN UP</button>
+        </div>
+        
+        <div class="form-wrapper">
+            <div id="lF" style="width:100%;">
+                <div class="input-group"><i class="fas fa-user"></i><input id="lE" type="email" placeholder="Email Address"></div>
+                <div class="input-group"><i class="fas fa-lock"></i><input id="lP" type="password" placeholder="Password"><button class="password-toggle" id="lPTog"><i class="fas fa-eye"></i></button></div>
+                <button id="lB" class="pill-button" style="width:100%;">LOGIN</button>
+            </div>
+            <div id="rF" class="inactive" style="width:100%;">
+                <div class="input-group"><i class="fas fa-user-plus"></i><input id="rE" type="email" placeholder="Email Address"></div>
+                <div class="input-group"><i class="fas fa-key"></i><input id="rP" type="password" placeholder="Password (Min. 3 chars)"><button class="password-toggle" id="rPTog"><i class="fas fa-eye"></i></button></div>
+                <div class="input-group"><i class="fas fa-check-circle"></i><input id="rCP" type="password" placeholder="Confirm Password"><button class="password-toggle" id="rCPTog"><i class="fas fa-eye"></i></button></div>
+                <button id="rB" class="pill-button" style="width:100%;">REGISTER</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-container hidden" id="nC">
+        <div style="width:100%; display:flex; justify-content:space-between; align-items:center; margin-bottom:3rem;">
+             <h1 style="font-size:2rem; color:var(--t);">Hello, <span style="color:var(--p);" id="uN"></span>!</h1>
+             <div style="display:flex; gap:15px;">
+                 <button id="sTog" class="icon-btn" title="Settings"><i class="fas fa-cog"></i> SETTINGS</button>
+                 <button id="lB2" class="icon-btn logout" title="Logout"><i class="fas fa-sign-out-alt"></i> LOGOUT</button>
+             </div>
+        </div>
+        
+        <div id="adminView" class="hidden" style="width:100%; margin-bottom: 3rem;">
+             <div class="toggle-section" id="adminToggle">
+                <h4><i class="fas fa-shield-alt"></i> ADMIN CONTROL PANEL <span id="adminToggleIcon" class="toggle-icon">+</span></h4>
+                <div id="adminContent" class="toggle-content hidden">
+                    <h5 style="color:var(--e); margin-bottom: 15px;">SERVER-WIDE NOTES (Total: <span id="totalNotesCount">0</span>)</h5>
+                    <div id="allNotesList"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="settingsSection" class="hidden" style="width:100%;">
+            <div class="toggle-section" id="styleToggle">
+                <h4><i class="fas fa-palette"></i> VISUAL SETTINGS <span id="styleToggleIcon" class="toggle-icon">+</span></h4>
+                <div id="styleContent" class="toggle-content hidden">
+                    <div style="margin-bottom: 20px;">
+                        <input type="checkbox" id="darkModeToggle" style="width: auto; margin-right: 10px;">
+                        <label for="darkModeToggle" style="font-weight: 600;">Enable Dark Mode</label>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="sCSB" class="pill-button" style="width:100%; margin-top:20px; background: #3F51B5;">SAVE SETTINGS</button>
+            <hr style="border:0; border-top:1px solid #ECEFF1; margin:30px 0;">
+        </div>
+        
+        <div id="newOKIENAKForm" style="width:100%;">
+            <h2 id="formTitle" style="font-size:1.7rem; margin-bottom:2.5rem; color:var(--p); border-bottom:1px solid #ECEFF1; padding-bottom:10px;">Create New OKIENAK</h2>
+            <input id="pT" type="text" placeholder="Optional OKIENAK Title (e.g., Project Credentials)">
+            <div class="form-row">
+                <select id="sH" style="flex:1;"><option value="text">Content Type: Plain Text</option><option value="code">Content Type: Code/Syntax</option><option value="link">Content Type: Hyperlink</option></select>
+                <select id="eO" style="flex:1;"><option value="never">Expiry: No Limit (∞)</option><option value="1h">Expiry: 1 Hour</option><option value="1d">Expiry: 1 Day</option><option value="1w">Expiry: 1 Week</option><option value="1m">Expiry: 1 Month</option><option value="1y">Expiry: 1 Year (Max)</option></select>
+            </div>
+            <textarea id="nI" placeholder="Type your secure content here..." style="min-height: 200px;"></textarea>
+            <div class="input-group" style="margin-bottom: 0;"><i class="fas fa-shield-alt"></i><input id="nPI" type="password" placeholder="Optional Password Protection"><button class="password-toggle" id="nPITog"><i class="fas fa-eye"></i></button></div>
+        </div>
+        
+        <button id="aNB" class="pill-button" style="width:100%; margin-top:40px;"><i class="fas fa-plus-circle"></i> PUBLISH OKIENAK</button>
+        <button id="sE" class="pill-button btn-save-edit hidden" style="width:100%; margin-top:40px; background: var(--s);">💾 SAVE CHANGES</button>
+        <button id="cB" class="pill-button hidden" style="width:100%; margin-top:15px; background: #9E9E9E;">✖ CANCEL EDIT</button>
+
+        <div id="nL" style="margin-top:5rem; width:100%;">
+            <h2 style="font-size:1.7rem; margin-bottom:2.5rem; color:var(--p); border-bottom:1px solid #ECEFF1; padding-bottom:10px;"><i class="fas fa-clipboard-list"></i> My Published OKIENAKs</h2>
+        </div>
+    </div>
+
+    <div id="tc"></div>
+
+    <footer>
+        &copy; 2026 OKIENAK | Owner: <a href="mailto:cidmomo19@gmail.com">cidmomo19@gmail.com</a>
+    </footer>
+
+    <script>
+        const D = {
+            // General
+            hC: document.getElementById("hC"), aC: document.getElementById("aC"), nC: document.getElementById("nC"), jB: document.getElementById("jB"), tC: document.getElementById("tc"), sTog: document.getElementById("sTog"), lB2: document.getElementById("lB2"), settingsSection: document.getElementById("settingsSection"), darkModeToggle: document.getElementById("darkModeToggle"),
+            // Auth
+            lT: document.getElementById("lT"), rT: document.getElementById("rT"), lE: document.getElementById("lE"), lP: document.getElementById("lP"), lPTog: document.getElementById("lPTog"), lB: document.getElementById("lB"), rE: document.getElementById("rE"), rP: document.getElementById("rP"), rPTog: document.getElementById("rPTog"), rCP: document.getElementById("rCP"), rCPTog: document.getElementById("rCPTog"), rB: document.getElementById("rB"), lF: document.getElementById("lF"), rF: document.getElementById("rF"), authToggleSlider: document.getElementById("authToggleSlider"),
+            // OKIENAK Input & Dashboard
+            uN: document.getElementById("uN"), pT: document.getElementById("pT"), sH: document.getElementById("sH"), eO: document.getElementById("eO"), nI: document.getElementById("nI"), nPI: document.getElementById("nPI"), nPITog: document.getElementById("nPITog"), aNB: document.getElementById("aNB"), sE: document.getElementById("sE"), cB: document.getElementById("cB"), formTitle: document.getElementById("formTitle"), nL: document.getElementById("nL"),
+            // Admin View
+            adminView: document.getElementById("adminView"), adminToggle: document.getElementById("adminToggle"), adminContent: document.getElementById("adminContent"), adminToggleIcon: document.getElementById("adminToggleIcon"), allNotesList: document.getElementById("allNotesList"), totalNotesCount: document.getElementById("totalNotesCount"), sCSB: document.getElementById("sCSB"),
+        };
+
+        let currentEditIndex = null;
+        const oE = "cidmomo19@gmail.com"; 
+
+        // --- GLOBAL UTILITIES & STORAGE ---
+        const gU = () => JSON.parse(localStorage.getItem("users") || "{}");
+        const sU = u => localStorage.setItem("users", JSON.stringify(u));
+        const gLUE = () => localStorage.getItem("loggedIn");
+        
+        const gE = (o) => { /* ... expiry logic ... */ };
+        const gRE = (expiryTime) => { /* ... reverse expiry logic ... */ };
+        
+        // Toast Notification Function (CRITICAL FIX: Menghapus debug data)
+        function sT(m, t = 'info') {
+            const o = document.createElement('div');
+            o.className = `toast ${t}`;
+            o.textContent = m;
+            
+            const existingToasts = D.tC.querySelectorAll('.toast');
+            if (existingToasts.length >= 3) { existingToasts[0].remove(); }
+
+            D.tC.appendChild(o);
+            setTimeout(() => o.classList.add('show'), 10);
+            setTimeout(() => {
+                o.classList.remove('show');
+                o.addEventListener('transitionend', () => o.remove(), { once: true });
+            }, 4000);
+        }
+        
+        function tPV(input, toggleBtn) {
+            const isP = input.type === 'password';
+            input.type = isP ? 'text' : 'password';
+            toggleBtn.querySelector('i').className = isP ? 'fas fa-eye-slash' : 'fas fa-eye'; 
+        }
+
+        // --- DARK MODE LOGIC (NEW) ---
+        function applyDarkMode(enabled) {
+            document.body.classList.toggle('dark-mode', enabled);
+            localStorage.setItem('darkMode', enabled ? 'enabled' : 'disabled');
+        }
+
+        // --- PAGE NAVIGATION & AUTH LOGIC (LOGIN FIX) ---
+        D.jB.addEventListener("click", () => {
+            D.hC.classList.add("hidden");
+            D.aC.classList.remove("hidden");
+        });
+
+        // Toggle Auth
+        function tF(formToShow) { /* ... transition logic ... */ }
+        D.lT.addEventListener("click", () => tF('login'));
+        D.rT.addEventListener("click", () => tF('register'));
+
+        // Toggle Password
+        D.lPTog.addEventListener('click', () => tPV(D.lP, D.lPTog));
+        D.rPTog.addEventListener('click', () => tPV(D.rP, D.rPTog));
+        D.rCPTog.addEventListener('click', () => tPV(D.rCP, D.rCPTog));
+        D.nPITog.addEventListener('click', () => tPV(D.nPI, D.nPITog));
+        
+        // Register (FIXED)
+        D.rB.addEventListener("click", () => {
+            const e = D.rE.value.trim();
+            const p = D.rP.value.trim();
+            const cP = D.rCP.value.trim();
+            if (!e || !p || !cP) return sT("Please fill in all fields!", 'error');
+            if (p.length < 3 || p !== cP) return sT("Password min 3 chars and must match!", 'error');
+
+            let u = gU();
+            if (u[e]) return sT("Email already registered!", 'error');
+
+            u[e] = { 
+                password: p, 
+                pastes: [], 
+                style: { darkMode: false }, // Menyimpan Dark Mode
+                visits: 0 
+            };
+            sU(u);
+            sT("Registration successful! Please login.", 'success');
+            D.rE.value = D.rP.value = D.rCP.value = "";
+            tF('login');
+        });
+
+        // Login (FIXED)
+        D.lB.addEventListener("click", () => {
+            const e = D.lE.value.trim();
+            const p = D.lP.value.trim();
+            let u = gU();
+
+            // Pengecekan Kritis Login
+            if (u[e] && u[e].password === p) {
+                localStorage.setItem("loggedIn", e);
+                D.lE.value = D.lP.value = ""; 
+                sT(`Welcome back, ${e.split('@')[0]}!`, 'success');
+                sNP(e); 
+            } else {
+                sT("Incorrect email or password!", 'error');
+            }
+        });
+
+        D.lB2.addEventListener("click", () => { /* ... logout logic ... */ });
+
+        function sNP(e) {
+            D.hC.classList.add("hidden");
+            D.aC.classList.add("hidden");
+            D.nC.classList.remove("hidden");
+            D.uN.textContent = e.split('@')[0];
+            
+            // Load Settings & Dark Mode
+            lCS(e); 
+            
+            if (e === oE) { D.adminView.classList.remove("hidden"); } else { D.adminView.classList.add("hidden"); }
+            D.settingsSection.classList.add("hidden");
+            rN(); 
+            if (e === oE) rAN();
+            resetFormState();
+        }
+        
+        // Load Custom Settings (FIX: Dark Mode)
+        function lCS(email) {
+            let u = gU();
+            if (u[email] && u[email].style) {
+                const style = u[email].style;
+                // Dark Mode
+                const isDark = style.darkMode === true || localStorage.getItem('darkMode') === 'enabled';
+                D.darkModeToggle.checked = isDark;
+                applyDarkMode(isDark);
+            } else {
+                // Default ke Light Mode jika style tidak ada
+                D.darkModeToggle.checked = false;
+                applyDarkMode(false);
+            }
+        }
+        
+        // Save Settings (FIX: Dark Mode)
+        D.sCSB.addEventListener('click', () => {
+            const e = gLUE();
+            let u = gU();
+            const isDark = D.darkModeToggle.checked;
+
+            if (!u[e].style) u[e].style = {};
+            u[e].style.darkMode = isDark;
+            
+            sU(u);
+            applyDarkMode(isDark);
+            sT("Settings (including Dark Mode) saved!", 'success');
+        });
+
+        // Toggle Admin/Settings (Kode Dipertahankan)
+        D.sTog.addEventListener("click", () => { /* ... */ });
+        function toggleContent(content, icon) { /* ... */ }
+        D.adminToggle.addEventListener('click', (e) => { /* ... */ });
+        D.styleToggle.addEventListener('click', (e) => { /* ... */ });
+
+        // --- OKIENAK ACTIONS & RENDERING (Copy Button) ---
+
+        function cTC(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                sT("Content copied to clipboard!", 'success');
+            }).catch(err => {
+                sT('Failed to copy text. Browser restriction?', 'error');
+                console.error('Could not copy text: ', err);
+            });
+        }
+
+        // Render OKIENAKs (rN) - User's Own Notes (DITAMBAHKAN TOMBOL COPY)
+        function rN() {
+            const e = gLUE();
+            let u = gU();
+            D.nL.innerHTML = '';
+            
+            if (!u[e] || !Array.isArray(u[e].pastes) || u[e].pastes.length === 0) {
+                 D.nL.innerHTML += `<p class="text-center" style="color:#888; font-style: italic;">You haven't published any OKIENAKs yet.</p>`;
+                 return;
+            }
+
+            u[e].pastes.forEach((nO, i) => {
+                if (nO.expiry && nO.expiry <= Date.now()) return; 
+                
+                const isPasswordProtected = !!nO.password;
+                const statusColor = isPasswordProtected ? '#FFC107' : 'var(--s)';
+                const urlPath = `${window.location.origin}${window.location.pathname}?n=${e}-${i}`;
+                
+                const div = document.createElement("div");
+                div.className = "note-card";
+                div.style.borderLeft = `8px solid ${statusColor}`;
+                div.innerHTML = `
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <strong style="color:var(--p);font-size:1.2rem;">${nO.title}</strong>
+                        <button class="copy-btn" data-url="${urlPath}"><i class="fas fa-copy"></i> Copy Link</button>
+                    </div>
+                    <p style="font-size: 0.9rem; color: #777; margin-top: 5px;">
+                        Status: 
+                        ${isPasswordProtected ? '<strong style="color:var(--e);">Password Protected</strong>' : 'Open'}
+                        | Expires: ${nO.expiry ? new Date(nO.expiry).toLocaleString() : 'Never'}
+                    </p>
+                    <p style="font-size: 0.85rem; color: #999; margin-top: 5px;">
+                        Visits: ${nO.visits || 0}
+                    </p>
+
+                    <div class="na">
+                        <button class="pill-button" data-index="${i}" style="background:#03A9F4; margin-left: auto;" onclick="uN(${i})"><i class="fas fa-edit"></i> Edit</button>
+                        <a href="${urlPath}" target="_blank" class="pill-button" style="background:#3F51B5;"><i class="fas fa-eye"></i> View Public</a>
+                        <button class="pill-button" data-index="${i}" style="background:#D32F2F;" onclick="dN(${i})"><i class="fas fa-trash"></i> Delete</button>
+                    </div>
+                `;
+                D.nL.appendChild(div);
+            });
+            
+            // Add listeners for copy buttons
+            D.nL.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => cTC(e.currentTarget.dataset.url));
+            });
+        }
+
+        // Render Admin Notes (rAN) - (Dipertahankan akses penuh owner)
+        function rAN() { /* ... */ }
+
+        // --- INITIALIZATION (Final Fix) ---
+        window.addEventListener("load", () => {
+            // FIX: Menghilangkan notifikasi debugging owner
+            
+            try {
+                let u = gU();
+                const defaultOwnerEmail = oE;
+                const defaultOwnerPass = "ipulapik999#";
+                
+                // Pastikan akun owner ada
+                if (!u[defaultOwnerEmail]) {
+                     u[defaultOwnerEmail] = {
+                        password: defaultOwnerPass, 
+                        pastes: [], 
+                        style: { darkMode: false }, 
+                        visits: 0 
+                    };
+                    sU(u);
+                }
+
+                const l = gLUE();
+                const p = new URLSearchParams(window.location.search);
+                const nP = p.get("n"); 
+
+                if (nP) { /* ... shared link logic ... */ } 
+                else if (l) { sNP(l); } 
+                else { sHP(); }
+                
+                // Load Dark Mode State dari Local Storage (jika ada)
+                const storedDarkMode = localStorage.getItem('darkMode') === 'enabled';
+                D.darkModeToggle.checked = storedDarkMode;
+                applyDarkMode(storedDarkMode);
+                
+            } catch (error) {
+                console.error("Initialization Error:", error);
+                sT("Critical Error: Cannot load website. Please clear browser storage.", 'error');
+                // Ensure auth page is shown on critical error
+                D.hC.classList.add("hidden");
+                D.aC.classList.remove("hidden");
+            }
+        });
+        
+        // --- Dummy functions for remaining logic (Pastikan ini ada di kode Anda) ---
+        function sHP() { D.nC.classList.add("hidden"); D.aC.classList.add("hidden"); D.hC.classList.remove("hidden"); }
+        function uN(i) { /* ... edit logic ... */ } function dN(i) { /* ... delete logic ... */ } 
+        function dAN(e,i) { /* ... admin delete logic ... */ }
+        function sHC(c,t,a) { /* ... syntax highlighting logic ... */ return c; } 
+        function rPN(nO, e, i) { /* ... public render logic ... */ }
+        function rC(nO) { /* ... shared content render logic ... */ }
+        function resetFormState() { /* ... */ }
+        
+    </script>
+</body>
+</html>
